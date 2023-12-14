@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>防衛ゲーム</title>
+        <style>
+
+        </style>
+        <script>
+            "use strict";
+            
+
+            
+            class Field {
+                constructor() {
+
+                }
+            }
+            class Unit {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                }
+                action() {
+
+                }
+            }
+            class Player extends Unit {
+                constructor(x, y) {
+                    super(x, y);
+                    this.speed = 5;
+                }
+                action() {
+                    if(keyA == true) {
+                        this.x -= this.speed;
+                    }
+                    if(keyD == true) {
+                        this.x += this.speed;
+                    }
+                    if(keyW == true) {
+                        this.y -= this.speed;
+                    }
+                    if(keyS == true) {
+                        this.y += this.speed;
+                    }
+                }
+                render() {
+                    let img = new Image();
+                    img.src = 'images/pipo-charachip001.png';
+                    context.drawImage(img, 32, 0, 32, 32, this.x - 16, this.y - 16, 32, 32);
+                }
+            }
+            class Building {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.level = 0;
+                }
+                action() {
+
+                }
+                render() {
+
+                }
+            }
+            class DC extends Building {
+                constructor(x, y) {
+                    super(x, y);
+                }
+                render() {
+                    let img = new Image();
+                    img.src = 'images/pipo-map001.png';
+                    context.drawImage(img, 0, 0, 32, 32, this.x - 16, this.y - 16, 32, 32);
+                    context.drawImage(img, 32*2, 32*9, 32, 32, this.x - 16, this.y - 16, 32, 32);
+                }
+            }
+            class Tower extends Building {
+                constructor(x, y) {
+                    super(x, y);
+                }
+                render() {
+                    let img = new Image();
+                    img.src = 'images/pipo-map001.png';
+                    context.drawImage(img, 0, 0, 32, 32, this.x - 16, this.y - 16, 32, 32);
+                }
+            }
+            class Hut extends Building {
+                constructor(x, y) {
+                    super(x, y);
+                }
+            }
+            class Quarry extends Building {
+                constructor(x, y) {
+                    super(x, y);
+                }
+            }
+            class Enemy extends Unit {
+                constructor(x, y) {
+                    super(x, y);
+                }
+                action() {
+
+                }
+                render() {
+
+                }
+            }
+
+
+            let context;
+            let timerId;
+            let keyW = false;
+            let keyA = false;
+            let keyS = false;
+            let keyD = false;
+            let keySpace = false;
+            let keyQ = false;
+            let player = new Player(400, 400);
+            let buildings = new Array(25);
+            for(let i=0;i<25;i++) {
+                buildings[i] = new Array(25);
+            }
+            let buildingMap = [
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ];
+
+            function init() {
+                context = document.getElementById('field').getContext('2d');
+                document.addEventListener('keydown', function(e) {
+                    console.log(e.keyCode);
+                    if(e.keyCode==87) {
+                        keyW = true;
+                    } else if(e.keyCode==65) {
+                        keyA = true;
+                    } else if(e.keyCode==83) {
+                        keyS = true;
+                    } else if(e.keyCode==68) {
+                        keyD = true;
+                    } else if(e.keyCode==32) {
+                        keySpace = true;
+                    } else if(e.keyCode==81) {
+                        keyQ = true;
+                    }
+                });
+                document.addEventListener('keyup', function(e) {
+                    if(e.keyCode==87) {
+                        keyW = false;
+                    } else if(e.keyCode==65) {
+                        keyA = false;
+                    } else if(e.keyCode==83) {
+                        keyS = false;
+                    } else if(e.keyCode==68) {
+                        keyD = false;
+                    } else if(e.keyCode==32) {
+                        keySpace = false;
+                    } else if(e.keyCode==81) {
+                        keyQ = false;
+                    }
+                });
+
+                for(let i=0;i<25;i++) {
+                    for(let j=0;j<25;j++) {
+                        if(buildingMap[i][j] == 0) {
+                            buildings[i][j] = new Tower(i*32+16, j*32+16);
+                        } else if(buildingMap[i][j] == 1) {
+                            buildings[i][j] = new DC(i*32+16, j*32+16);
+                        } else if(buildingMap[i][j] == 2) {
+                            buildings[i][j] = new Hut(i*32+16, j*32+16);
+                        } else if(buildingMap[i][j] == 3) {
+                            buildings[i][j] = new Quarry(i*32+16, j*32+16);
+                        }
+                    }
+                }
+                
+                timerId = setInterval(tick, 100);
+            }
+            function tick() {
+                player.action();
+                render();
+            }
+            function render() {
+                //context.clearRect(0, 0, 800, 800);
+                
+                for(let i=0;i<25;i++) {
+                    for(let j=0;j<25;j++) {
+                        buildings[i][j].render();
+                    }
+                }
+                player.render();
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <h1>タイトル(あとで入力)</h1>
+        <h2>進捗ダメです</h2>
+        <h2>hoge hoge</h2>
+        <canvas id="field" width="800" height="800"></canvas>
+        <p>
+            操作方法<br>
+            [W][S][A][D] : 上下左右に移動
+        </p>
+        <p>
+            クレジット<br>
+            ぴぽや倉庫様:<a href="https://pipoya.net/sozai/">https://pipoya.net/sozai/</a>
+        </p>
+    </body>
+</html>
